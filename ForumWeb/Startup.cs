@@ -23,7 +23,19 @@ namespace ForumWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("MustBeUser",
+                    policy => policy.RequireRole("User"));
+                options.AddPolicy("MustBeAdmin",
+                    policy => policy.RequireRole("Admin"));
+            });
+            services.AddRazorPages(options => 
+            {
+                options.Conventions.AuthorizePage("/Privacy", "MustBeUser");
+                options.Conventions.AuthorizeFolder("/Admin");
+                options.Conventions.AllowAnonymousToPage("/Admin/Info");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +57,7 @@ namespace ForumWeb
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

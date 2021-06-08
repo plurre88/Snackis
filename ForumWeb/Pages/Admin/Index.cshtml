@@ -1,0 +1,58 @@
+﻿@page
+@model ForumWeb.Pages.Admin.IndexModel
+@{
+}
+
+<div>
+    Befintliga roller: <br />
+    @foreach (var role in Model.Roles)
+    {
+        <p>@role.Name</p>
+    }
+</div>
+
+@if (Model.IsAdmin)
+{
+    <p>Detta Kan bara admin se</p>
+}
+@if (Model.IsUser)
+{
+    <p>Detta kan bara användare se</p>
+}
+
+<form method="post">
+    <label for="RoleName">Ny roll</label>
+    <input name="RoleName" />
+    <input type="submit" value="Skapa ny roll" />
+</form>
+
+<div>
+    Befintliga Användare: <br />
+    <table>
+        <tr>
+            <th>Användarnamn</th>
+            @foreach (var role in Model.Roles)
+            {
+                <th>@role.Name</th>
+            }
+        </tr>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.UserName</td>
+
+                @foreach (var role in Model.Roles)
+                {
+                    if (await Model._userManager.IsInRoleAsync(user, role.Name))
+                    {
+                        <td><a href="?RemoveUserId=@user.Id&Role=@role.Name" class="bg-success text-white">YES</a></td>
+                    }
+                    else
+                    {
+                        <td><a href="?AddUserId=@user.Id&Role=@role.Name" class="bg-danger text-white">NO</a></td>
+                    }
+                }
+            </tr>
+        }
+    </table>
+</div>
