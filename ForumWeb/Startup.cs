@@ -23,6 +23,16 @@ namespace ForumWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient<Gateways.CategoryGateway>();
+            services.AddHttpClient<Gateways.SubCategoryGateway>();
+            services.AddHttpClient<Gateways.PostGateway>();
+            services.AddHttpClient<Gateways.CommentGateway>();
+
+            /*services.AddScoped<Gateways.CategoryGateway>();
+            services.AddScoped<Gateways.SubCategoryGateway>();
+            services.AddScoped<Gateways.PostGateway>();
+            services.AddScoped<Gateways.CommentGateway>();*/
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("MustBeUser",
@@ -33,7 +43,7 @@ namespace ForumWeb
             services.AddRazorPages(options => 
             {
                 options.Conventions.AuthorizePage("/Privacy", "MustBeUser");
-                options.Conventions.AuthorizeFolder("/Admin");
+                options.Conventions.AuthorizeFolder("/Admin", "MustBeAdmin");
                 options.Conventions.AllowAnonymousToPage("/Admin/Info");
             });
         }

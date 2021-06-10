@@ -4,28 +4,29 @@
 }
 
 <div>
-    Befintliga roller: <br />
+    <strong>Befintliga roller:</strong> <br /> <br />
     @foreach (var role in Model.Roles)
     {
         <p>@role.Name</p>
     }
 </div>
+<hr />
 
-@if (Model.IsAdmin)
+@*@if (Model.IsAdmin)
 {
     <p>Detta Kan bara admin se</p>
 }
 @if (Model.IsUser)
 {
     <p>Detta kan bara användare se</p>
-}
+}*@
 
 <form method="post">
     <label for="RoleName">Ny roll</label>
-    <input name="RoleName" />
+    <input asp-for="RoleName" />
     <input type="submit" value="Skapa ny roll" />
 </form>
-
+<hr />
 <div>
     Befintliga Användare: <br />
     <table>
@@ -55,4 +56,20 @@
             </tr>
         }
     </table>
+</div>
+<hr />
+<form method="post">
+    <label asp-for="NewOrChangedCategory.CategoryName">Ny kategori</label>
+    <input asp-for="NewOrChangedCategory.CategoryName" />
+    <input type="submit" value="Skapa ny kategori" />
+</form>
+<hr />
+<div>
+    <strong>Befintliga Kategorier:</strong> <br /> <br />
+
+    @foreach (var category in Model.Categories)
+    {
+        <p>@category.CategoryName</p>
+        <a href="?DeleteCategoryId=@category.Id">Delete</a>
+    }
 </div>

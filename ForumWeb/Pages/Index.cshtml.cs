@@ -1,4 +1,6 @@
 ﻿using ForumWeb.Areas.Identity.Data;
+using ForumWeb.Gateways;
+using ForumWeb.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,22 +14,37 @@ namespace ForumWeb.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
         private readonly UserManager<ForumWebUser> _userManager;
+        private readonly CategoryGateway _categoryGateway;
+        private readonly SubCategoryGateway _subCategoryGateway;
 
         public ForumWebUser MyUser { get; set; }
+        public List<Category> Categories { get; set; }
+        public List<SubCategory> SubCategories { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger, UserManager<ForumWebUser> userManager)
+        public Category NewOrChangedCategory { get; set; }
+
+        public IndexModel(UserManager<ForumWebUser> userManager, CategoryGateway categoryGateway, SubCategoryGateway subCategoryGateway)
         {
-            _logger = logger;
             _userManager = userManager;
+            _categoryGateway = categoryGateway;
+            _subCategoryGateway = subCategoryGateway;
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
             MyUser = await _userManager.GetUserAsync(User);
 
+            Categories = await _categoryGateway.GetCategories();
+            SubCategories = await _subCategoryGateway.GetSubCategories();
+
             return Page();
+        }
+        public async Task<IActionResult> OnPostAsync()
+        {
+            
+
+            return RedirectToPage();
         }
     }
 }
