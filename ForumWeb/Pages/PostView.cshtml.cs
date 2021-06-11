@@ -1,4 +1,4 @@
-﻿using ForumWeb.Areas.Identity.Data;
+using ForumWeb.Areas.Identity.Data;
 using ForumWeb.Gateways;
 using ForumWeb.Models;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ForumWeb.Pages
 {
-    public class IndexModel : PageModel
+    public class PostViewModel : PageModel
     {
         private readonly UserManager<ForumWebUser> _userManager;
         private readonly CategoryGateway _categoryGateway;
@@ -30,7 +30,7 @@ namespace ForumWeb.Pages
         [BindProperty(SupportsGet = true)]
         public Guid SelectedSubCategoryId { get; set; }
 
-        public IndexModel(UserManager<ForumWebUser> userManager, CategoryGateway categoryGateway, SubCategoryGateway subCategoryGateway, PostGateway postGateway)
+        public PostViewModel(UserManager<ForumWebUser> userManager, CategoryGateway categoryGateway, SubCategoryGateway subCategoryGateway, PostGateway postGateway)
         {
             _userManager = userManager;
             _categoryGateway = categoryGateway;
@@ -50,9 +50,7 @@ namespace ForumWeb.Pages
         }
         public async Task<IActionResult> OnPostAsync()
         {
-            await _postGateway.PostPosts(NewPost);
-
-            return RedirectToPage(new { SelectedSubCategoryId = NewPost.SubCatId });
+            return RedirectToPage();
         }
     }
 }

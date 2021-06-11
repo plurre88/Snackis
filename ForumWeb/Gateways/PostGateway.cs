@@ -20,7 +20,7 @@ namespace ForumWeb.Gateways
             _httpClient = httpClient;
         }
 
-        public async Task<List<Post>> GetPost()
+        public async Task<List<Post>> GetAllPost()
         {
             /*var response = await _httpClient.GetAsync(_configuration["ForumAPI"] + "/Posts");
             string apiResponse = await response.Content.ReadAsStringAsync();

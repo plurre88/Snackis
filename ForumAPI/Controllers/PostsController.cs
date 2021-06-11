@@ -78,6 +78,7 @@ namespace ForumAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Post>> PostPost(Post post)
         {
+            post.CreatedAt = DateTime.Now;
             _context.Post.Add(post);
             await _context.SaveChangesAsync();
 

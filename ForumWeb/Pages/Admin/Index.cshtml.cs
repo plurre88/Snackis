@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ForumWeb.Pages.Admin
 {
@@ -31,9 +32,14 @@ namespace ForumWeb.Pages.Admin
 
         [BindProperty]
         public Category NewOrChangedCategory { get; set; }
-
-        [BindProperty(SupportsGet = true)]
+        [BindProperty]
         public Guid DeleteCategoryId { get; set; }
+
+        [BindProperty]
+        public SubCategory NewOrChangedSubCategory { get; set; }
+        [BindProperty]
+        public Guid DeleteSubCategoryId { get; set; }
+        public SelectList SelectList { get; set; }
 
         public List<IdentityRole> Roles { get; set; }
 
@@ -42,15 +48,19 @@ namespace ForumWeb.Pages.Admin
 
         public IQueryable<ForumWebUser> Users { get; set; }
 
+        private readonly SubCategoryGateway _subCategoryGateway;
         private readonly CategoryGateway _categoryGateway;
         private readonly RoleManager<IdentityRole> _roleManager;
         public UserManager<ForumWebUser> _userManager;
+
         public List<Category> Categories { get; set; }
-        public IndexModel(RoleManager<IdentityRole> roleManager, UserManager<ForumWebUser> userManager, CategoryGateway categoryGateway)
+        public List<SubCategory> SubCategories { get; set; }
+        public IndexModel(RoleManager<IdentityRole> roleManager, UserManager<ForumWebUser> userManager, CategoryGateway categoryGateway, SubCategoryGateway subCategoryGateway)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _categoryGateway = categoryGateway;
+            _subCategoryGateway = subCategoryGateway;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -58,12 +68,8 @@ namespace ForumWeb.Pages.Admin
             Roles = _roleManager.Roles.ToList();
             Users = _userManager.Users;
             Categories = await _categoryGateway.GetCategories();
-
-            if(DeleteCategoryId != Guid.Empty)
-            {
-                await _categoryGateway.DeleteCategory(DeleteCategoryId);
-                return RedirectToPage();
-            }
+            SubCategories = await _subCategoryGateway.GetSubCategories();
+            SelectList = new SelectList(Categories, "Id", "CategoryName");
 
             if (AddUserId != null)
             {
@@ -90,21 +96,32 @@ namespace ForumWeb.Pages.Admin
             {
                 await CreateRole(RoleName);
             }
-            if(ModelState.IsValid)
+            if(NewOrChangedCategory != null)
             {
                 await _categoryGateway.PostCategories(NewOrChangedCategory);
-            }
-            
+            }            
             return RedirectToPage();
         }
-        /*public async Task<IActionResult> OnPostDeleteAsync()
+        public async Task<IActionResult> OnPostSubCreateAsync()
         {
-            if(DeleteCategoryId != Guid.Empty)
+            if (NewOrChangedSubCategory != null)
+            {
+                await _subCategoryGateway.PostSubCategories(NewOrChangedSubCategory);
+            }
+            return RedirectToPage();
+        }
+        public async Task<IActionResult> OnPostDeleteAsync()
+        {
+            if (DeleteCategoryId != Guid.Empty)
             {
                 await _categoryGateway.DeleteCategory(DeleteCategoryId);
             }
+            if (DeleteSubCategoryId != Guid.Empty)
+            {
+                await _subCategoryGateway.DeleteSubCategory(DeleteSubCategoryId);
+            }
             return RedirectToPage();
-        }*/
+        }
         public async Task CreateRole(string roleName)
         {
             bool exist = await _roleManager.RoleExistsAsync(roleName);

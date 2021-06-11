@@ -3,73 +3,107 @@
 @{
 }
 
-<div>
-    <strong>Befintliga roller:</strong> <br /> <br />
-    @foreach (var role in Model.Roles)
-    {
-        <p>@role.Name</p>
-    }
-</div>
-<hr />
-
-@*@if (Model.IsAdmin)
-{
-    <p>Detta Kan bara admin se</p>
-}
-@if (Model.IsUser)
-{
-    <p>Detta kan bara användare se</p>
-}*@
-
-<form method="post">
-    <label for="RoleName">Ny roll</label>
-    <input asp-for="RoleName" />
-    <input type="submit" value="Skapa ny roll" />
-</form>
-<hr />
-<div>
-    Befintliga Användare: <br />
-    <table>
-        <tr>
-            <th>Användarnamn</th>
-            @foreach (var role in Model.Roles)
-            {
-                <th>@role.Name</th>
-            }
-        </tr>
-        @foreach (var user in Model.Users)
+<div class="container">
+    <form method="post">
+        <input asp-for="RoleName" />
+        <input type="submit" class="btn btn-dark btn-sm" value="Skapa ny roll" />
+    </form>
+    <hr />
+    <div>
+        <h3>roller:</h3>
+        @foreach (var role in Model.Roles)
         {
-            <tr>
-                <td>@user.UserName</td>
+            <strong>@role.Name</strong>
+            <br />
+        }
+    </div>
+    <hr />
 
+    @*@if (Model.IsAdmin)
+        {
+            <p>Detta Kan bara admin se</p>
+        }
+        @if (Model.IsUser)
+        {
+            <p>Detta kan bara användare se</p>
+        }*@
+
+
+    <div>
+        <h3>Användare:</h3>
+        <table>
+            <tr>
+                <th>Användarnamn</th>
                 @foreach (var role in Model.Roles)
                 {
-                    if (await Model._userManager.IsInRoleAsync(user, role.Name))
-                    {
-                        <td><a href="?RemoveUserId=@user.Id&Role=@role.Name" class="bg-success text-white">YES</a></td>
-                    }
-                    else
-                    {
-                        <td><a href="?AddUserId=@user.Id&Role=@role.Name" class="bg-danger text-white">NO</a></td>
-                    }
+                    <th>@role.Name</th>
                 }
             </tr>
-        }
-    </table>
-</div>
-<hr />
-<form method="post">
-    <label asp-for="NewOrChangedCategory.CategoryName">Ny kategori</label>
-    <input asp-for="NewOrChangedCategory.CategoryName" />
-    <input type="submit" value="Skapa ny kategori" />
-</form>
-<hr />
-<div>
-    <strong>Befintliga Kategorier:</strong> <br /> <br />
+            @foreach (var user in Model.Users)
+            {
+                <tr>
+                    <td>@user.UserName</td>
 
-    @foreach (var category in Model.Categories)
-    {
-        <p>@category.CategoryName</p>
-        <a href="?DeleteCategoryId=@category.Id">Delete</a>
-    }
+                    @foreach (var role in Model.Roles)
+                    {
+                        if (await Model._userManager.IsInRoleAsync(user, role.Name))
+                        {
+                            <td><a href="?RemoveUserId=@user.Id&Role=@role.Name" class="bg-success text-white">YES</a></td>
+                        }
+                        else
+                        {
+                            <td><a href="?AddUserId=@user.Id&Role=@role.Name" class="bg-danger text-white">NO</a></td>
+                        }
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+    <hr />
+    <form method="post">
+        <input asp-for="NewOrChangedCategory.CategoryName" />
+        <input type="submit" class="btn btn-dark btn-sm" value="Skapa ny kategori" />
+    </form>
+    <hr />
+    <div>
+        <h3>Kategorier:</h3>
+        @foreach (var category in Model.Categories)
+        {
+            <div class="row">
+                <div class="mr-3 ml-3">
+                    <strong>@category.CategoryName</strong>
+                </div>
+                <div class="mb-1">
+                    <form method="post" asp-page-handler="Delete">
+                        <input type="hidden" asp-for="DeleteCategoryId" value="@category.Id" />
+                        <input type="submit" class="btn btn-danger btn-sm" value="Delete" />
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+    <hr />
+    <form method="post" asp-page-handler="SubCreate">
+        <input asp-for="NewOrChangedSubCategory.SubCatName" />
+        <select asp-for="NewOrChangedSubCategory.CategoryId" asp-items="Model.SelectList"></select>
+        <input type="submit" class="btn btn-dark btn-sm" value="Skapa ny Subkategori" />
+    </form>
+    <hr />
+    <div>
+        <h3>SubKategorier:</h3>
+        @foreach (var Subcategory in Model.SubCategories)
+        {
+            <div class="row">
+                <div class="mr-3 ml-3">
+                    <strong>@Subcategory.SubCatName</strong>
+                </div>
+                <div class="mb-1">
+                    <form method="post" asp-page-handler="Delete">
+                        <input type="hidden" asp-for="DeleteSubCategoryId" value="@Subcategory.Id" />
+                        <input type="submit" class="btn btn-danger btn-sm" value="Delete" />
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
 </div>

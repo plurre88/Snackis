@@ -78,6 +78,7 @@ namespace ForumAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Comment>> PostComment(Comment comment)
         {
+            comment.CreatedAt = DateTime.Now;
             _context.Comment.Add(comment);
             await _context.SaveChangesAsync();
 
