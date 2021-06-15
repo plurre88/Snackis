@@ -47,6 +47,11 @@ namespace ForumWeb.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Nickname")]
+            public string NickName { get; set; }
+
+            [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -75,10 +80,21 @@ namespace ForumWeb.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ForumWebUser { UserName = Input.Email, Email = Input.Email };
+                var user = new ForumWebUser { 
+                    UserName = Input.Email, 
+                    Email = Input.Email, 
+                    NickName = Input.NickName 
+                };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
+                    if(user.Email == "admin@test.com")
+                    {
+                        var adminroleresult = await _userManager.AddToRoleAsync(user, "Admin");
+                    }
+
+                    var roleresult = await _userManager.AddToRoleAsync(user, "User");
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

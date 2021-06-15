@@ -12,47 +12,47 @@ namespace ForumAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CommentsController : ControllerBase
+    public class ReportsController : ControllerBase
     {
         private readonly ForumAPIContext _context;
 
-        public CommentsController(ForumAPIContext context)
+        public ReportsController(ForumAPIContext context)
         {
             _context = context;
         }
 
-        // GET: api/Comments
+        // GET: api/Reports
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetComment()
+        public async Task<ActionResult<IEnumerable<Report>>> GetReport()
         {
-            return await _context.Comment.ToListAsync();
+            return await _context.Report.ToListAsync();
         }
 
-        // GET: api/Comments/5
+        // GET: api/Reports/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Comment>> GetComment(Guid id)
+        public async Task<ActionResult<Report>> GetReport(Guid id)
         {
-            var comment = await _context.Comment.FindAsync(id);
+            var report = await _context.Report.FindAsync(id);
 
-            if (comment == null)
+            if (report == null)
             {
                 return NotFound();
             }
 
-            return comment;
+            return report;
         }
 
-        // PUT: api/Comments/5
+        // PUT: api/Reports/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment(Guid id, Comment comment)
+        public async Task<IActionResult> PutReport(Guid id, Report report)
         {
-            if (id != comment.Id)
+            if (id != report.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(comment).State = EntityState.Modified;
+            _context.Entry(report).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace ForumAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CommentExists(id))
+                if (!ReportExists(id))
                 {
                     return NotFound();
                 }
@@ -69,40 +69,41 @@ namespace ForumAPI.Controllers
                     throw;
                 }
             }
+
             return NoContent();
         }
 
-        // POST: api/Comments
+        // POST: api/Reports
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Comment>> PostComment(Comment comment)
+        public async Task<ActionResult<Report>> PostReport(Report report)
         {
-            comment.CreatedAt = DateTime.Now;
-            _context.Comment.Add(comment);
+            report.CreatedAt = DateTime.Now;
+            _context.Report.Add(report);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
+            return CreatedAtAction("GetReport", new { id = report.Id }, report);
         }
 
-        // DELETE: api/Comments/5
+        // DELETE: api/Reports/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteComment(Guid id)
+        public async Task<IActionResult> DeleteReport(Guid id)
         {
-            var comment = await _context.Comment.FindAsync(id);
-            if (comment == null)
+            var report = await _context.Report.FindAsync(id);
+            if (report == null)
             {
                 return NotFound();
             }
 
-            _context.Comment.Remove(comment);
+            _context.Report.Remove(report);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool CommentExists(Guid id)
+        private bool ReportExists(Guid id)
         {
-            return _context.Comment.Any(e => e.Id == id);
+            return _context.Report.Any(e => e.Id == id);
         }
     }
 }

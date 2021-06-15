@@ -20,7 +20,8 @@ namespace ForumWeb.Areas.Identity
                     options.UseSqlServer(
                         context.Configuration.GetConnectionString("ForumWebContextConnection")));
 
-                services.AddDefaultIdentity<ForumWebUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                services.AddDefaultIdentity<ForumWebUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                    .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<ForumWebContext>();
             });
         }

@@ -9,7 +9,10 @@ namespace ForumWeb.Areas.Identity.Data
     // Add profile data for application users by adding properties to the ForumWebUser class
     public class ForumWebUser : IdentityUser
     {
+        [PersonalData]
         public string NickName { get; set; }
-        public string Img { get; set; }
+
+        [PersonalData]
+        public byte[] Img { get; set; }
     }
 }

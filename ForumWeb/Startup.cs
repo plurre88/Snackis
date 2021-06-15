@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +24,37 @@ namespace ForumWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddHttpClient<Gateways.CategoryGateway>();
+            services.AddHttpClient<Gateways.SubCategoryGateway>();
+            services.AddHttpClient<Gateways.PostGateway>();
+            services.AddHttpClient<Gateways.CommentGateway>();
+            services.AddHttpClient<Gateways.ReportGateway>();
+            services.AddHttpClient<Gateways.MessageGateway>();
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+            /*services.AddScoped<Gateways.CategoryGateway>();
+            services.AddScoped<Gateways.SubCategoryGateway>();
+            services.AddScoped<Gateways.PostGateway>();
+            services.AddScoped<Gateways.CommentGateway>();*/
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("MustBeUser",
+                    policy => policy.RequireRole("User"));
+                options.AddPolicy("MustBeAdmin",
+                    policy => policy.RequireRole("Admin"));
+            });
+            services.AddRazorPages(options => 
+            {
+                options.Conventions.AuthorizePage("/Privacy", "MustBeUser");
+                options.Conventions.AuthorizeFolder("/Admin", "MustBeAdmin");
+                options.Conventions.AllowAnonymousToPage("/Admin/Info");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,8 +74,11 @@ namespace ForumWeb
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseCookiePolicy();
+
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

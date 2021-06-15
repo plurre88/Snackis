@@ -39,5 +39,9 @@ namespace ForumAPI.Data
                 .WithMany()
                 .HasForeignKey(p => p.PostId);
         }
+
+        public DbSet<ForumAPI.Models.Report> Report { get; set; }
+
+        public DbSet<ForumAPI.Models.Message> Message { get; set; }
     }
 }
