@@ -28,6 +28,10 @@ namespace ForumWeb.Gateways
             return JsonSerializer.Deserialize<List<Post>>(apiResponse);*/
             return await _httpClient.GetFromJsonAsync<List<Post>>(_configuration["ForumAPI"] + "/Posts");
         }
+        public async Task<Post> GetPost(Guid postId)
+        {
+            return await _httpClient.GetFromJsonAsync<Post>(_configuration["ForumAPI"] + "/Posts/" + postId);
+        }
 
         public async Task<Post> PostPosts(Post post)
         {
@@ -37,12 +41,9 @@ namespace ForumWeb.Gateways
             return returnValue;
         }
 
-        public async Task<Post> DeletePost(Guid deleteId)
+        public async Task DeletePost(Guid deleteId)
         {
-            var response = await _httpClient.DeleteAsync(_configuration["ForumAPI"] + "/Posts/" + deleteId);
-            Post returnValue = await response.Content.ReadFromJsonAsync<Post>();
-
-            return returnValue;
+            await _httpClient.DeleteAsync(_configuration["ForumAPI"] + "/Posts/" + deleteId);            
         }
 
         public async Task PutPost(Guid editId, Post post)

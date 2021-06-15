@@ -1,0 +1,73 @@
+﻿@page
+@model ForumWeb.Pages.Admin.ReportModel
+@{
+}
+
+@if (Model.Reports.Count < 1)
+{
+    <h4>Det finns inga anmälningar för tillfället.</h4>
+}
+<div>
+    @foreach (var report in Model.Reports)
+    {
+        <div class="row card shadow-sm rounded mb-3">
+            <div class="card-body shadow-sm rounded border-dark" style="background-color:aliceblue">
+                @foreach (var comment in Model.Comments)
+                {
+                    if (comment.Id == report.CommentId)
+                    {
+                        <div class="container row">
+                            <div class="col-11">
+                                <strong>Raporterad kommentar: </strong> <br />
+                                <p>@comment.CommentContent</p>
+                                <p>@comment.CreatedAt</p>
+                            </div>
+                            <div class="col-1">
+                                <div class="mb-1">
+                                    <form method="post" asp-page-handler="DeleteComment">
+                                        <input type="hidden" asp-for="DeleteCommentId" value="@report.CommentId" />
+                                        <input type="submit" class="btn btn-danger btn-sm" value="Radera Kommentar" />
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                @foreach (var post in Model.Posts)
+                {
+                    if (post.Id == report.PostId)
+                    {
+                        <div class="container row">
+                            <div class="col-11">
+                                <strong>Raporterad Post: </strong> <br />
+                                <p>@post.Title</p>
+                                <p>@post.PostContent</p>
+                                <p>@post.CreatedAt</p>
+                            </div>
+                            <div class="col-1">
+                                <div class="mb-1">
+                                    <form method="post" asp-page-handler="DeletePost">
+                                        <input type="hidden" asp-for="DeletePostId" value="@report.PostId" />
+                                        <input type="submit" class="btn btn-danger btn-sm" value="Radera Post" />
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="container row card-body">
+                <div class="col-11 ml-2">
+                    <p>@report.Content</p>
+                    <p>@report.CreatedAt</p>
+                </div>
+                <div class="col-1 mb-1 mr-2">
+                    <form method="post" asp-page-handler="DeleteReport">
+                        <input type="hidden" asp-for="DeleteReportId" value="@report.Id" />
+                        <input type="submit" class="btn btn-danger btn-sm" value="Radera Anmälan" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>

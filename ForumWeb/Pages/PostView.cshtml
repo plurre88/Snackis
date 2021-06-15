@@ -2,3 +2,169 @@
 @model ForumWeb.Pages.PostViewModel
 @{
 }
+
+<div class="container">
+    <div class="row">
+        <div class="col-10">
+            <div class="card shadow-lg p-3 mb-5 bg-body rounded">
+                <h5 class="card-header bg-dark text-white">
+                    <div class="row">
+                        <div class="col-10">
+                            @if (Model.SelectedPost.User.Img != null)
+                            {
+                                <img style="width:45px;height:45px; object-fit:cover; border-radius:30px" src="data:image/*;base64,@(Convert.ToBase64String(Model.SelectedPost.User.Img))">
+                            }
+                            Post av: @Model.SelectedPost.User.NickName
+                        </div>
+                            <div class="col-2 row">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CreateMessageModal" data-bs-messageUserId="@Model.SelectedPost.User.Id">Meddelande</button>
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#CreateReportModal" data-bs-postId="@Model.SelectedPost.Id">Anmäl</button>
+                            </div>
+                    </div>
+                </h5>
+                <div class="card-body">
+                    <h5 class="card-title text-uppercase">@Model.SelectedPost.Title</h5>
+                    <p class="card-text">@Model.SelectedPost.PostContent</p>
+                    <div class="row">
+                        <div class="ml-1">
+                            <small>@Model.SelectedPost.CreatedAt</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            @foreach (var comment in Model.Comments)
+            {
+                if (comment.PostId == Model.SelectedPostId)
+                {
+                    <div class="card">
+                        <h6 class="card-header">
+                            <div class="row">
+                                <div class="col-10">
+                                    @if (comment.User.Img != null)
+                                    {
+                                        <img style="width:45px;height:45px; object-fit:cover; border-radius:30px" src="data:image/*;base64,@(Convert.ToBase64String(comment.User.Img))">
+                                    }
+                                    Kommentar av: @comment.User.NickName
+                                </div>
+                                <div class="col-2 row">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CreateMessageModal" data-bs-messageUserId="@comment.User.Id">Meddelande</button>
+                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#CreateReportModal" data-bs-commentId="@comment.Id">Anmäla</button>
+                                </div>
+                            </div>
+                        </h6>
+                        <div class="card-body">
+                            <p class="card-text">@comment.CommentContent</p>
+                            <div class="row">
+                                <div class="ml-1">
+                                    <small>@comment.CreatedAt</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        <div class="col-2">
+            <br />
+            <form method="post">
+                <textarea style="height:150px" asp-for="NewComment.CommentContent" placeholder="Kommentar"></textarea>
+                <input type="hidden" asp-for="NewComment.PostId" value="@Model.SelectedPostId" />
+                <input type="hidden" asp-for="NewComment.CreatedCommentById" value="@Model.MyUser.Id" />
+                <input type="submit" class="btn btn-dark btn-sm" value="Skapa ny Kommentar" />
+            </form>
+        </div>
+    </div>
+</div>
+
+@*------------------Modal-Report-------------->>>*@
+
+<div class="modal fade" id="CreateReportModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="Report">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Anmälan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">Anledning:</label>
+                        <textarea class="form-control" asp-for="SelectedReport.Content"></textarea>
+                        <input type="hidden" asp-for="SelectedReport.ByUser" value="@Model.MyUser.Id" />
+                        <input id="PostInput" type="hidden" asp-for="SelectedReport.PostId" />
+                        <input id="CommentInput" type="hidden" asp-for="SelectedReport.CommentId" />
+                        <input type="hidden" asp-for="SelectedPostId" value="@Model.SelectedPostId" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                    <button type="submit" class="btn btn-danger">Rapportera</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@*------------------Modal-Message--------------->>>*@
+
+<div class="modal fade" id="CreateMessageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="Message">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Meddelande</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">Meddelande:</label>
+                        <textarea class="form-control" asp-for="NewMessage.Content"></textarea>
+                        <input type="hidden" asp-for="NewMessage.FromUser" value="@Model.MyUser.Id" />
+                        <input id="ToUser" type="hidden" asp-for="NewMessage.ToUser" />
+                        <input type="hidden" asp-for="SelectedPostId" value="@Model.SelectedPostId" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                    <button type="submit" class="btn btn-primary">Skicka</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*-------------Modal-Script---------->>>*@
+<script>
+    var CreateReportModal = document.getElementById('CreateReportModal')
+    CreateReportModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        var reportPostId = button.getAttribute('data-bs-postId')
+        var reportCommentId = button.getAttribute('data-bs-commentId')
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        var PostInput = CreateReportModal.querySelector('#PostInput')
+        var CommentInput = CreateReportModal.querySelector('#CommentInput')
+
+        PostInput.value = reportPostId
+        CommentInput.value = reportCommentId
+    })
+
+    var CreateMessageModal = document.getElementById('CreateMessageModal')
+    CreateMessageModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        var messageUserId = button.getAttribute('data-bs-messageUserId')
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        var ToUser = CreateMessageModal.querySelector('#ToUser')
+
+        ToUser.value = messageUserId
+    })
+</script>

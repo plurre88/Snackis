@@ -12,47 +12,47 @@ namespace ForumAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CommentsController : ControllerBase
+    public class MessagesController : ControllerBase
     {
         private readonly ForumAPIContext _context;
 
-        public CommentsController(ForumAPIContext context)
+        public MessagesController(ForumAPIContext context)
         {
             _context = context;
         }
 
-        // GET: api/Comments
+        // GET: api/Messages
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetComment()
+        public async Task<ActionResult<IEnumerable<Message>>> GetMessage()
         {
-            return await _context.Comment.ToListAsync();
+            return await _context.Message.ToListAsync();
         }
 
-        // GET: api/Comments/5
+        // GET: api/Messages/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Comment>> GetComment(Guid id)
+        public async Task<ActionResult<Message>> GetMessage(Guid id)
         {
-            var comment = await _context.Comment.FindAsync(id);
+            var message = await _context.Message.FindAsync(id);
 
-            if (comment == null)
+            if (message == null)
             {
                 return NotFound();
             }
 
-            return comment;
+            return message;
         }
 
-        // PUT: api/Comments/5
+        // PUT: api/Messages/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment(Guid id, Comment comment)
+        public async Task<IActionResult> PutMessage(Guid id, Message message)
         {
-            if (id != comment.Id)
+            if (id != message.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(comment).State = EntityState.Modified;
+            _context.Entry(message).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace ForumAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CommentExists(id))
+                if (!MessageExists(id))
                 {
                     return NotFound();
                 }
@@ -69,40 +69,41 @@ namespace ForumAPI.Controllers
                     throw;
                 }
             }
+
             return NoContent();
         }
 
-        // POST: api/Comments
+        // POST: api/Messages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Comment>> PostComment(Comment comment)
+        public async Task<ActionResult<Message>> PostMessage(Message message)
         {
-            comment.CreatedAt = DateTime.Now;
-            _context.Comment.Add(comment);
+            message.CreatedAt = DateTime.Now;
+            _context.Message.Add(message);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
+            return CreatedAtAction("GetMessage", new { id = message.Id }, message);
         }
 
-        // DELETE: api/Comments/5
+        // DELETE: api/Messages/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteComment(Guid id)
+        public async Task<IActionResult> DeleteMessage(Guid id)
         {
-            var comment = await _context.Comment.FindAsync(id);
-            if (comment == null)
+            var message = await _context.Message.FindAsync(id);
+            if (message == null)
             {
                 return NotFound();
             }
 
-            _context.Comment.Remove(comment);
+            _context.Message.Remove(message);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool CommentExists(Guid id)
+        private bool MessageExists(Guid id)
         {
-            return _context.Comment.Any(e => e.Id == id);
+            return _context.Message.Any(e => e.Id == id);
         }
     }
 }

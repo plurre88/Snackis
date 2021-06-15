@@ -19,16 +19,6 @@
     </div>
     <hr />
 
-    @*@if (Model.IsAdmin)
-        {
-            <p>Detta Kan bara admin se</p>
-        }
-        @if (Model.IsUser)
-        {
-            <p>Detta kan bara användare se</p>
-        }*@
-
-
     <div>
         <h3>Användare:</h3>
         <table>
@@ -105,5 +95,9 @@
                 </div>
             </div>
         }
+    </div>
+    <hr />
+    <div class="text-center">
+        <a class="btn btn-warning" href="./Admin/Report" role="button">REPORTS</a>
     </div>
 </div>

@@ -1,0 +1,52 @@
+﻿@page
+@model ForumWeb.Pages.MessageViewModel
+@{
+}
+
+@if (Model.MyUser != null)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-2">
+                <div class="row">
+                    <h4>Inkorg: @Model.MyUser.NickName</h4>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="row">
+                    @foreach (var message in Model.Messages)
+                    {
+                        @if (Model.MyUser.Id == message.ToUser.Id.ToString())
+                        {
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-9">
+                                            @if (message.FromUser.Img != null)
+                                            {
+                                                <img style="width:45px;height:45px; object-fit:cover; border-radius:30px" src="data:image/*;base64,@(Convert.ToBase64String(message.FromUser.Img))">
+                                            }
+                                            <strong>@message.FromUser.NickName</strong>
+                                        </div>
+                                        <div class="col-3">
+                                            <p>@message.CreatedAt</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">@message.Content</p>
+                                    <form method="post" asp-page-handler="Reply">
+                                        <textarea style="height:150px; width:300px;" asp-for="ReplyMessage.Content" placeholder="Meddelande"></textarea>
+                                        <input type="hidden" asp-for="ReplyMessage.FromUser" value="@message.ToUser.Id" />
+                                        <input type="hidden" asp-for="ReplyMessage.ToUser" value="@message.FromUser.Id" />
+                                        <input type="submit" class="btn btn-dark btn-sm" value="Skicka meddelande" />
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

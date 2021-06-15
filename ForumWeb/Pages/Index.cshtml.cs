@@ -22,13 +22,23 @@ namespace ForumWeb.Pages
         public ForumWebUser MyUser { get; set; }
         public List<Category> Categories { get; set; }
         public List<SubCategory> SubCategories { get; set; }
-        public List<Post> Posts { get; set; }
+        public List<PresentationPost> Posts { get; set; } = new List<PresentationPost>();
 
         [BindProperty]
         public Post NewPost { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public Guid SelectedSubCategoryId { get; set; }
+
+        public class PresentationPost
+        {
+            public Guid Id { get; set; }
+            public string Title { get; set; }
+            public Guid SubCatId { get; set; }
+            public ForumWebUser User { get; set; }
+            public DateTime CreatedAt { get; set; }
+            public string PostContent { get; set; }
+        }
 
         public IndexModel(UserManager<ForumWebUser> userManager, CategoryGateway categoryGateway, SubCategoryGateway subCategoryGateway, PostGateway postGateway)
         {
@@ -44,7 +54,21 @@ namespace ForumWeb.Pages
 
             Categories = await _categoryGateway.GetCategories();
             SubCategories = await _subCategoryGateway.GetSubCategories();
-            Posts = await _postGateway.GetAllPost();
+            var posts = await _postGateway.GetAllPost();
+
+            foreach(var post in posts)
+            {
+                var presentationPost = new PresentationPost
+                {
+                    Id = post.Id,
+                    Title = post.Title,
+                    SubCatId = post.SubCatId,
+                    User = await _userManager.FindByIdAsync(post.CreatedPostById.ToString()),
+                    CreatedAt = post.CreatedAt,
+                    PostContent = post.PostContent
+                };
+                Posts.Add(presentationPost);
+            }
 
             return Page();
         }

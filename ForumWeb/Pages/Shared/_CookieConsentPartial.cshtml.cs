@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace ForumWeb.Pages.Admin
+namespace ForumWeb.Pages.Shared
 {
-    public class InfoModel : PageModel
+    public class _CookieConsentPartialModel : PageModel
     {
         public void OnGet()
         {

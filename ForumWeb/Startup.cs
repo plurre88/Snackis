@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,14 @@ namespace ForumWeb
             services.AddHttpClient<Gateways.SubCategoryGateway>();
             services.AddHttpClient<Gateways.PostGateway>();
             services.AddHttpClient<Gateways.CommentGateway>();
+            services.AddHttpClient<Gateways.ReportGateway>();
+            services.AddHttpClient<Gateways.MessageGateway>();
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
 
             /*services.AddScoped<Gateways.CategoryGateway>();
             services.AddScoped<Gateways.SubCategoryGateway>();
@@ -64,6 +73,8 @@ namespace ForumWeb
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseCookiePolicy();
 
             app.UseRouting();
 

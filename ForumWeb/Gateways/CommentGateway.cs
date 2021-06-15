@@ -37,12 +37,9 @@ namespace ForumWeb.Gateways
             return returnValue;
         }
 
-        public async Task<Comment> DeleteComment(Guid deleteId)
+        public async Task DeleteComment(Guid deleteId)
         {
-            var response = await _httpClient.DeleteAsync(_configuration["ForumAPI"] + "/Comments/" + deleteId);
-            Comment returnValue = await response.Content.ReadFromJsonAsync<Comment>();
-
-            return returnValue;
+            await _httpClient.DeleteAsync(_configuration["ForumAPI"] + "/Comments/" + deleteId);
         }
 
         public async Task PutComment(Guid editId, Comment comment)
