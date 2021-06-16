@@ -7,15 +7,16 @@
 
 @if (Model.MyUser != null)
 {
-<div style="background-image: url('/img/Daco.png')" class="text-center text-light bg-body rounded">
-    <span style="font-size:8rem;"><i class="fab fa-the-red-yeti"></i></span>
-    <h1 style="font-size:6rem"><strong>Game Talk</strong></h1>
-    <br /> <br /> <br />
-</div> 
+    <div style="background-image: url('/img/Daco.png')" class="text-center text-light bg-body rounded">
+        <span style="font-size:8rem;"><i class="fab fa-the-red-yeti"></i></span>
+        <h1 style="font-size:6rem"><strong>Game Talk</strong></h1>
+        <br /> <br /> <br />
+    </div>
     <br />
     <div class="container">
         <div class="row">
             <div class="col-2">
+                <h3 class="text-center">Kategorier</h3>
                 <div class="btn-group-vertical">
                     @foreach (var category in Model.Categories)
                     {
@@ -37,6 +38,7 @@
                 </div>
             </div>
             <div class="col-8">
+                <h3 class="text-center">Poster</h3>
                 @if (Model.SelectedSubCategoryId != Guid.Empty)
                 {
                     @foreach (var post in Model.Posts)
@@ -45,11 +47,11 @@
                         {
                             <div class="card">
                                 <h5 class="card-header">
-                                    Post av: @post.User.NickName  
                                     @if (post.User.Img != null)
                                     {
                                         <img style="width:35px;height:35px; object-fit:cover; border-radius:30px" src="data:image/*;base64,@(Convert.ToBase64String(post.User.Img))">
                                     }
+                                     @post.User.NickName
                                 </h5>
                                 <div class="card-body">
                                     <h5 class="card-title">@post.Title</h5>
@@ -71,11 +73,11 @@
                     {
                         <div class="card">
                             <h5 class="card-header">
-                                Post av: @post.User.NickName  
                                 @if (post.User.Img != null)
                                 {
                                     <img style="width:35px;height:35px; object-fit:cover; border-radius:30px" src="data:image/*;base64,@(Convert.ToBase64String(post.User.Img))">
                                 }
+                                 @post.User.NickName
                             </h5>
                             <div class="card-body">
                                 <h5 class="card-title">@post.Title</h5>
@@ -92,6 +94,7 @@
                 }
             </div>
             <div class="col-2">
+                <h3 class="text-center">Skapa Post</h3>
                 @if (Model.SelectedSubCategoryId != Guid.Empty)
                 {
                     <form method="post">
@@ -101,6 +104,10 @@
                         <input type="hidden" asp-for="NewPost.CreatedPostById" value="@Model.MyUser.Id" />
                         <input type="submit" class="btn btn-dark btn-sm" value="Skapa ny Post" />
                     </form>
+                }
+                else
+                {
+                    <p class="text-center">Välj en kategori först</p>
                 }
             </div>
         </div>

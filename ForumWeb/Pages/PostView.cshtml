@@ -1,4 +1,8 @@
 ﻿@page
+@using Microsoft.AspNetCore.Identity
+@using ForumWeb.Areas.Identity.Data
+@inject SignInManager<ForumWebUser> SignInManager
+@inject UserManager<ForumWebUser> UserManager
 @model ForumWeb.Pages.PostViewModel
 @{
 }
@@ -16,10 +20,10 @@
                             }
                             Post av: @Model.SelectedPost.User.NickName
                         </div>
-                            <div class="col-2 row">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CreateMessageModal" data-bs-messageUserId="@Model.SelectedPost.User.Id">Meddelande</button>
-                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#CreateReportModal" data-bs-postId="@Model.SelectedPost.Id">Anmäl</button>
-                            </div>
+                        <div class="col-2 row">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CreateMessageModal" data-bs-messageUserId="@Model.SelectedPost.User.Id">Meddelande</button>
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#CreateReportModal" data-bs-postId="@Model.SelectedPost.Id">Anmäl</button>
+                        </div>
                     </div>
                 </h5>
                 <div class="card-body">
@@ -29,6 +33,16 @@
                         <div class="ml-1">
                             <small>@Model.SelectedPost.CreatedAt</small>
                         </div>
+                        @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "Admin"))
+                        {
+                            <div class="mb-1">
+                                <form method="post" asp-page-handler="DeletePost">
+                                    <input type="hidden" asp-for="DeletePostId" value="@Model.SelectedPost.Id" />
+                                    <input type="hidden" asp-for="SelectedPostId" value="@Model.SelectedPostId" />
+                                    <input type="submit" class="btn btn-danger btn-sm" value="Delete" />
+                                </form>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -59,6 +73,16 @@
                                 <div class="ml-1">
                                     <small>@comment.CreatedAt</small>
                                 </div>
+                                @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "Admin") || Model.MyUser.Id == comment.User.Id)
+                                {
+                                    <div class="mb-1">
+                                        <form method="post" asp-page-handler="DeleteComment">
+                                            <input type="hidden" asp-for="DeleteCommentId" value="@comment.Id" />
+                                            <input type="hidden" asp-for="SelectedPostId" value="@Model.SelectedPostId" />
+                                            <input type="submit" class="btn btn-danger btn-sm" value="Delete" />
+                                        </form>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>

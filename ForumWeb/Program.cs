@@ -1,5 +1,10 @@
+using ForumWeb.Areas.Identity.Data;
+using ForumWeb.Data;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,9 +16,59 @@ namespace ForumWeb
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                try
+                {
+                    var context = services.GetRequiredService<ForumWebContext>();
+
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    var userRoleExists = await roleManager.RoleExistsAsync("User");
+                    var adminRoleExists = await roleManager.RoleExistsAsync("Admin");
+
+                    var bajs = await roleManager.RoleExistsAsync("Admin");
+
+                    if (!userRoleExists)
+                    {
+                        await roleManager.CreateAsync(new IdentityRole("User"));
+                    }
+                    if (!adminRoleExists)
+                    {
+                        await roleManager.CreateAsync(new IdentityRole("Admin"));
+                    }
+
+                    var userManager = services.GetRequiredService<UserManager<ForumWebUser>>();
+                    var adminUser = await userManager.FindByNameAsync("Admin");
+
+                    if (adminUser == null)
+                    {
+                        var admin = new ForumWebUser
+                        {
+                            NickName = "Admin",
+                            Email = "admin@test.com",
+                            EmailConfirmed = true,
+                            PhoneNumberConfirmed = true
+                        };
+
+                        await userManager.CreateAsync(admin, "Admin123!");
+                        await userManager.AddToRoleAsync(admin, "Admin");
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(e, "An error occurred adding admin or roles");
+                }
+            }
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
