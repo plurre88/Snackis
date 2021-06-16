@@ -42,6 +42,10 @@ namespace ForumWeb.Pages
         public Message NewMessage { get; set; }
 
         public PresentationPost SelectedPost { get; set; }
+        [BindProperty]
+        public Guid DeleteCommentId { get; set; }
+        [BindProperty]
+        public Guid DeletePostId { get; set; }
 
         public class PresentationPost
         {
@@ -124,6 +128,16 @@ namespace ForumWeb.Pages
             await _messageGateway.PostMessage(NewMessage);
 
             return RedirectToPage(new { SelectedPostId = SelectedPostId });
+        }
+        public async Task<IActionResult> OnPostDeleteCommentAsync()
+        {
+            await _commentGateway.DeleteComment(DeleteCommentId);
+            return RedirectToPage(new { SelectedPostId = SelectedPostId });
+        }
+        public async Task<IActionResult> OnPostDeletePostAsync()
+        {
+            await _postGateway.DeletePost(DeletePostId);
+            return RedirectToPage("/Index");
         }
     }
 }

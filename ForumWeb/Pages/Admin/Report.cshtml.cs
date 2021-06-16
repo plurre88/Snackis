@@ -40,7 +40,6 @@ namespace ForumWeb.Pages.Admin
         }
         public async Task<IActionResult> OnGetAsync()
         {
-
             Reports = await _reportGateway.GetReport();
             Posts = await _postGateway.GetAllPost();
             Comments = await _commentGateway.GetComments();

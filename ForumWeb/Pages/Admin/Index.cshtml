@@ -1,8 +1,13 @@
 ﻿@page
 @model ForumWeb.Pages.Admin.IndexModel
+@using Microsoft.AspNetCore.Identity
+@using ForumWeb.Areas.Identity.Data
+@inject UserManager<ForumWebUser> UserManager
 @{
 }
 
+<h1 class="text-center">Admin kontrollpanel</h1>
+<hr />
 <div class="container">
     <form method="post">
         <input asp-for="RoleName" />
@@ -34,9 +39,9 @@
                 <tr>
                     <td>@user.UserName</td>
 
-                    @foreach (var role in Model.Roles)
+                    @*@foreach (var role in Model.Roles)
                     {
-                        if (await Model._userManager.IsInRoleAsync(user, role.Name))
+                        if (await UserManager.IsInRoleAsync(user, role.Name))
                         {
                             <td><a href="?RemoveUserId=@user.Id&Role=@role.Name" class="bg-success text-white">YES</a></td>
                         }
@@ -44,7 +49,7 @@
                         {
                             <td><a href="?AddUserId=@user.Id&Role=@role.Name" class="bg-danger text-white">NO</a></td>
                         }
-                    }
+                    }*@
                 </tr>
             }
         </table>

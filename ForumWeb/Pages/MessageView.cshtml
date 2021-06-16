@@ -34,13 +34,21 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <p class="card-text">@message.Content</p>
-                                    <form method="post" asp-page-handler="Reply">
-                                        <textarea style="height:150px; width:300px;" asp-for="ReplyMessage.Content" placeholder="Meddelande"></textarea>
-                                        <input type="hidden" asp-for="ReplyMessage.FromUser" value="@message.ToUser.Id" />
-                                        <input type="hidden" asp-for="ReplyMessage.ToUser" value="@message.FromUser.Id" />
-                                        <input type="submit" class="btn btn-dark btn-sm" value="Skicka meddelande" />
-                                    </form>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h6 class="text-center">Meddelande:</h6>
+                                            <p class="card-text">@message.Content</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <h6 class="text-center">Svara</h6>
+                                            <form method="post" asp-page-handler="Reply">
+                                                <textarea style="height:150px; width:350px;" asp-for="ReplyMessage.Content" placeholder="Meddelande"></textarea>
+                                                <input type="hidden" asp-for="ReplyMessage.FromUser" value="@message.ToUser.Id" />
+                                                <input type="hidden" asp-for="ReplyMessage.ToUser" value="@message.FromUser.Id" />
+                                                <input type="submit" class="btn btn-dark btn-sm" value="Skicka meddelande" />
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         }

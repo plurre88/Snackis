@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ForumWeb.Pages.Admin
 {
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     public class IndexModel : PageModel
     {
         [BindProperty(SupportsGet =true)]
@@ -51,7 +51,7 @@ namespace ForumWeb.Pages.Admin
         private readonly SubCategoryGateway _subCategoryGateway;
         private readonly CategoryGateway _categoryGateway;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public UserManager<ForumWebUser> _userManager;
+        private readonly UserManager<ForumWebUser> _userManager;
 
         public List<Category> Categories { get; set; }
         public List<SubCategory> SubCategories { get; set; }
