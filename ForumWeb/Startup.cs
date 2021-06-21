@@ -37,11 +37,6 @@ namespace ForumWeb
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            /*services.AddScoped<Gateways.CategoryGateway>();
-            services.AddScoped<Gateways.SubCategoryGateway>();
-            services.AddScoped<Gateways.PostGateway>();
-            services.AddScoped<Gateways.CommentGateway>();*/
-
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("MustBeUser",
